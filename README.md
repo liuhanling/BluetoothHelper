@@ -1,3 +1,4 @@
+[![](https://jitpack.io/v/liuhanling/BluetoothHelper.svg)](https://jitpack.io/#liuhanling/BluetoothHelper)
 # BluetoothHelper
 Android Bluetooth Framework 蓝牙开发框架。
 
