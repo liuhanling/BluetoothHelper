@@ -1,4 +1,4 @@
-package com.hanley.bluetooth;
+package com.liuhanling.bluetooth;
 
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;

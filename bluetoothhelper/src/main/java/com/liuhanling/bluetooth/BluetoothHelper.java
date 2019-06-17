@@ -1,4 +1,4 @@
-package com.hanley.bluetooth;
+package com.liuhanling.bluetooth;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -11,10 +11,10 @@ import android.os.Looper;
 import android.os.Message;
 import android.widget.Toast;
 
-import com.hanley.bluetooth.constant.Constants;
-import com.hanley.bluetooth.listener.BluetoothConnectListener;
-import com.hanley.bluetooth.listener.BluetoothReceiveListener;
-import com.hanley.bluetooth.listener.BluetoothServiceListener;
+import com.liuhanling.bluetooth.constant.Constants;
+import com.liuhanling.bluetooth.listener.BluetoothConnectListener;
+import com.liuhanling.bluetooth.listener.BluetoothReceiveListener;
+import com.liuhanling.bluetooth.listener.BluetoothServiceListener;
 
 import java.util.Set;
 

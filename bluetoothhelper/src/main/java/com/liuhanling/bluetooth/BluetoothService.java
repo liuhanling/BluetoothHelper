@@ -1,4 +1,4 @@
-package com.hanley.bluetooth;
+package com.liuhanling.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
-import com.hanley.bluetooth.constant.Constants;
+import com.liuhanling.bluetooth.constant.Constants;
 
 import java.io.IOException;
 import java.io.InputStream;

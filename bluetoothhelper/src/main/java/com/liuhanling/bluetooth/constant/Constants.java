@@ -1,4 +1,4 @@
-package com.hanley.bluetooth.constant;
+package com.liuhanling.bluetooth.constant;
 
 import java.util.UUID;
 

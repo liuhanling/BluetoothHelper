@@ -1,12 +1,12 @@
-package com.hanley.bluetooth.service;
+package com.liuhanling.bluetooth.service;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 
-import com.hanley.bluetooth.BluetoothService;
-import com.hanley.bluetooth.BluetoothState;
-import com.hanley.bluetooth.constant.Constants;
+import com.liuhanling.bluetooth.BluetoothService;
+import com.liuhanling.bluetooth.BluetoothState;
+import com.liuhanling.bluetooth.constant.Constants;
 
 import java.io.IOException;
 

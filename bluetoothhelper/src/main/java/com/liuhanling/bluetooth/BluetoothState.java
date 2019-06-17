@@ -1,4 +1,4 @@
-package com.hanley.bluetooth;
+package com.liuhanling.bluetooth;
 
 public class BluetoothState {
 
