@@ -29,7 +29,7 @@ allprojects {
 
 ```gradle
 dependencies {
-    implementation 'com.github.liuhanling:BluetoothHelper:1.1'
+    implementation 'com.github.liuhanling:BluetoothHelper:1.2'
 }
 ```
 
