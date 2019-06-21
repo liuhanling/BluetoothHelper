@@ -65,7 +65,11 @@ public class BluetoothScanner {
      */
     private void unregisterReceiver() {
         mAdapter.cancelDiscovery();
-        mContext.unregisterReceiver(mBluetoothReceiver);
+        try {
+            mContext.unregisterReceiver(mBluetoothReceiver);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
         if (checkVersion()) {
             mBluetoothLeScanner.stopScan(mScanCallback);
         }
@@ -86,6 +90,8 @@ public class BluetoothScanner {
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
                 mScanListener.onScanStart();
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                mScanListener.onScanFinish(new ArrayList<>(mDeviceSet));
             }
         }
     };
