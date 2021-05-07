@@ -154,7 +154,7 @@ public class BluetoothHelper {
      * 停止蓝牙
      */
     public void close() {
-        stopService();
+        disconnect();
         disableBluetooth();
     }
 
@@ -203,7 +203,7 @@ public class BluetoothHelper {
      */
     public void scan(long time, BluetoothScanner.ScanListener listener) {
         if (mBluetoothScanner == null) {
-            mBluetoothScanner = new BluetoothScanner(mAppContext, mBluetoothAdapter);
+            mBluetoothScanner = new BluetoothScanner(mAppContext);
         }
         mBluetoothScanner.setScanListener(listener);
         mBluetoothScanner.scan(time);
@@ -328,9 +328,8 @@ public class BluetoothHelper {
      * 断开蓝牙设备
      */
     public void disconnect() {
-        if (isServiceAvailable()) {
-            mBluetoothService.stop();
-        }
+        setAutoConnect(false);
+        stopService();
     }
 
     /**
@@ -457,16 +456,15 @@ public class BluetoothHelper {
         @Override
         public void run() {
             mConnectionCount++;
-            if (mConnectionCount <= 5) {
-                showMsg("尝试重新连接蓝牙[" + mConnectionCount + "/5]...");
-                disconnect();
+            if (mConnectionCount <= 3) {
+                showMsg("尝试重新连接蓝牙[" + mConnectionCount + "/3]...");
+                stopService();
                 restartService();
                 connect(getDeviceAddr());
             } else {
                 mConnectionCount = 0;
                 showMsg("蓝牙连接失败！请尝试手动连接！");
                 disconnect();
-                stopService();
             }
         }
     };

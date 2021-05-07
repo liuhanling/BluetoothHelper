@@ -1,6 +1,5 @@
 package com.liuhanling.bluetooth;
 
-import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
@@ -18,45 +17,85 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * 蓝牙扫描类
+ */
 public class BluetoothScanner {
 
     private Context mContext;
     private IntentFilter mIntentFilter;
     private ScanListener mScanListener;
     private BluetoothAdapter mAdapter;
-    private BluetoothLeScanner mBluetoothLeScanner;
+    private BluetoothLeScanner mScanner;
+    private ScanCallback mScanCallback;
     private Handler mHandler = new Handler();
     private Set<BluetoothDevice> mDeviceSet = new HashSet<>();
 
-    public BluetoothScanner(Context context, BluetoothAdapter adapter) {
+    public BluetoothScanner(Context context) {
         this.mContext = context;
-        this.mAdapter = adapter;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            this.mBluetoothLeScanner = mAdapter.getBluetoothLeScanner();
-        }
+        this.initScanner();
+    }
+
+    public void setScanListener(ScanListener listener) {
+        this.mScanListener = listener;
     }
 
     /**
      * 设置蓝牙扫描过滤
      */
-    private void initFilter() {
+    private void initScanner() {
+        mAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mIntentFilter == null) {
             mIntentFilter = new IntentFilter();
             mIntentFilter.addAction(BluetoothDevice.ACTION_FOUND);
             mIntentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
             mIntentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (mScanner == null) {
+                mScanner = mAdapter.getBluetoothLeScanner();
+            }
+            // 调用时构建，否则4.4会报 NoClassDefFoundError
+            if (mScanCallback == null) {
+                mScanCallback = new ScanCallback() {
+                    @Override
+                    public void onScanResult(int callbackType, ScanResult result) {
+                        super.onScanResult(callbackType, result);
+                        BluetoothDevice device = result.getDevice();
+                        if (mScanListener != null && mDeviceSet.add(device)) {
+                            mScanListener.onScanDevice(device);
+                        }
+                    }
+                };
+            }
+        }
+    }
+
+    /**
+     * 蓝牙扫描
+     */
+    public void scan(long time) {
+        mDeviceSet.clear();
+        registerReceiver();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                unregisterReceiver();
+                if (mScanListener != null) {
+                    mScanListener.onScanFinish(new ArrayList<>(mDeviceSet));
+                }
+            }
+        }, time);
     }
 
     /**
      * 注册蓝牙扫描广播
      */
     private void registerReceiver() {
-        initFilter();
         mContext.registerReceiver(mBluetoothReceiver, mIntentFilter);
         mAdapter.startDiscovery();
-        if (checkVersion()) {
-            mBluetoothLeScanner.startScan(mScanCallback);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mScanner.startScan(mScanCallback);
         }
     }
 
@@ -70,13 +109,13 @@ public class BluetoothScanner {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
-        if (checkVersion()) {
-            mBluetoothLeScanner.stopScan(mScanCallback);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mScanner.stopScan(mScanCallback);
         }
     }
 
     /**
-     * 蓝牙扫描广播接收
+     * 蓝牙广播接收
      */
     public BroadcastReceiver mBluetoothReceiver = new BroadcastReceiver() {
         @Override
@@ -92,46 +131,6 @@ public class BluetoothScanner {
                 mScanListener.onScanStart();
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 mScanListener.onScanFinish(new ArrayList<>(mDeviceSet));
-            }
-        }
-    };
-
-    private boolean checkVersion() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
-    }
-
-    /**
-     * 开始扫描经典蓝牙
-     */
-    public void scan(long time) {
-        if (mAdapter.isDiscovering()) {
-            mAdapter.cancelDiscovery();
-        }
-        mDeviceSet.clear();
-        registerReceiver();
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                unregisterReceiver();
-                if (mScanListener != null) {
-                    mScanListener.onScanFinish(new ArrayList<>(mDeviceSet));
-                }
-            }
-        }, time);
-    }
-
-    public void setScanListener(ScanListener listener) {
-        this.mScanListener = listener;
-    }
-
-    private ScanCallback mScanCallback = new ScanCallback() {
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        @Override
-        public void onScanResult(int callbackType, ScanResult result) {
-            super.onScanResult(callbackType, result);
-            BluetoothDevice device = result.getDevice();
-            if (mScanListener != null && mDeviceSet.add(device)) {
-                mScanListener.onScanDevice(device);
             }
         }
     };
