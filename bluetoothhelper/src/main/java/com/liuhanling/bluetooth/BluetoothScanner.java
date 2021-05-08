@@ -72,7 +72,7 @@ public class BluetoothScanner {
     }
 
     /**
-     * 蓝牙扫描
+     * 开启蓝牙扫描
      */
     public void scan(long time) {
         mDeviceSet.clear();
@@ -86,6 +86,16 @@ public class BluetoothScanner {
                 }
             }
         }, time);
+    }
+
+    /**
+     * 清理蓝牙扫描
+     */
+    public void clear() {
+        setScanListener(null);
+        unregisterReceiver();
+        mHandler.removeCallbacksAndMessages(null);
+        mDeviceSet.clear();
     }
 
     /**
@@ -120,7 +130,9 @@ public class BluetoothScanner {
     public BroadcastReceiver mBluetoothReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (mScanListener == null) return;
+            if (mScanListener == null) {
+                return;
+            }
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);

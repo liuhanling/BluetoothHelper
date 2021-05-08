@@ -154,6 +154,8 @@ public class BluetoothHelper {
      * 停止蓝牙
      */
     public void close() {
+        setReceiveListener(null);
+        setServiceListener(null);
         disconnect();
         disableBluetooth();
     }
@@ -212,9 +214,12 @@ public class BluetoothHelper {
     /**
      * 清空蓝牙监听
      */
-    public void clearListener() {
-        mConnectListener = null;
-        mBluetoothScanner = null;
+    public void clear() {
+        setConnectListener(null);
+        if (mBluetoothScanner != null) {
+            mBluetoothScanner.clear();
+            mBluetoothScanner = null;
+        }
     }
 
     /**
